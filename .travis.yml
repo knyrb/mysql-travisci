@@ -65,28 +65,30 @@ script:
   - echo 'script'
   - pushd "$TCI_D_MYSQL/"
   - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" &
-  - sleep 10
+  - sleep 20
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
   - ps -ef
   - ls -lasht /tmp
-  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" shutdown
-  - sleep 10
+  - sleep 20
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
   - ps -ef
   - ls -lasht /tmp
   - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" &
-  - sleep 10
+  - sleep 20
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
   - ps -ef
   - ls -lasht /tmp
-  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" shutdown
-  - sleep 10
+  - sleep 20
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
   - ps -ef
   - ls -lasht /tmp
   - echo 'Fin.'
 
 after_success:
   - echo 'after success'
-  - ls -lasht /tmp
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
   - ls -lasht "$TCI_D_MYSQL_ROOT"
   - ls -lasht "$TCI_D_MYSQL"
   - cat "$TCI_D_MYSQL_ROOT/mysql.err"
