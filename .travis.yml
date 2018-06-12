@@ -9,12 +9,12 @@ sudo: required
 
 language: python
 python:
-	- "3.6"
+  - "3.6"
 
 #  pip?
 #cache: 
-#	directories:
-#	 - $HOME/.mysql_dl_tars
+# directories:
+#  - $HOME/.mysql_dl_tars
 
 #matrix:
 #  include:
@@ -37,44 +37,44 @@ python:
 
 # we'll have zeromq & libsodium, thanks
 install:
-	- pip install -U pysodium pyzmq
+  - pip install -U pysodium pyzmq
 
 before_script:
-	- echo 'before script'
-	- ps -ef
+  - echo 'before script'
+  - ps -ef
   - mysqld --verbose --help
 
-	# not the nicest thing to do over and over? cache instead?
-	# (my test showed a download speed of ~50 megabytes per second - proxy?)
-	# (well that was my first test - fluke? - subsequent ones were a lot slower!)
-#	- mkdir "$HOME/.mysql_dl_tars"
-#	- pushd "$HOME/.mysql_dl_tars"
-#	- wget -c -d https://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz
-#	- popd
+  # not the nicest thing to do over and over? cache instead?
+  # (my test showed a download speed of ~50 megabytes per second - proxy?)
+  # (well that was my first test - fluke? - subsequent ones were a lot slower!)
+# - mkdir "$HOME/.mysql_dl_tars"
+# - pushd "$HOME/.mysql_dl_tars"
+# - wget -c -d https://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz
+# - popd
 
-	# unpack & instal
-	# - thanks to https://superuser.com/q/311301 and
-	# - http://www.bluecrownsoftware.com/article/271/Installing-MySQL-without-Root-Access-on-Linux
-#	- mkdir "$HOME/mysql.1"
-#	- pushd "$HOME/mysql.1"
-#	- tar --gzip --extract --verbose --skip-old-files --directory="$HOME/mysql.1" --file="$HOME/.mysql_dl_tars/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz"
-#	- pushd "$HOME/mysql.1/mysql-5.6.40-linux-glibc2.12-x86_64"
-#	- export TCI_D_MYSQL=$(pwd)
-#	- "$TCI_D_MYSQL/scripts/mysql_install_db" --datadir="$TCI_D_MYSQL/data"
+  # unpack & instal
+  # - thanks to https://superuser.com/q/311301 and
+  # - http://www.bluecrownsoftware.com/article/271/Installing-MySQL-without-Root-Access-on-Linux
+# - mkdir "$HOME/mysql.1"
+# - pushd "$HOME/mysql.1"
+# - tar --gzip --extract --verbose --skip-old-files --directory="$HOME/mysql.1" --file="$HOME/.mysql_dl_tars/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz"
+# - pushd "$HOME/mysql.1/mysql-5.6.40-linux-glibc2.12-x86_64"
+# - export TCI_D_MYSQL=$(pwd)
+# - "$TCI_D_MYSQL/scripts/mysql_install_db" --datadir="$TCI_D_MYSQL/data"
 
 script:
 #  - .travis/run.sh
-	- echo 'script'
-#	- ./bin/mysqld --basedir="$HOME/mysql.1" --datadir="$TCI_D_MYSQL/data" --log-error="$HOME/mysql.1/mysql.err" --pid-file="$HOME/mysql.1/mysql.pid" --socket="$HOME/mysql.1/thesock" --port=3306 &
-	- sleep 30
-#	- ./bin/mysqladmin --socket="$HOME/mysql.1/thesock" shutdown
+  - echo 'script'
+# - ./bin/mysqld --basedir="$HOME/mysql.1" --datadir="$TCI_D_MYSQL/data" --log-error="$HOME/mysql.1/mysql.err" --pid-file="$HOME/mysql.1/mysql.pid" --socket="$HOME/mysql.1/thesock" --port=3306 &
+  - sleep 30
+# - ./bin/mysqladmin --socket="$HOME/mysql.1/thesock" shutdown
 
 #  - ./bin/mysql --socket=[Base MySQL Directory]/thesock
 
 after_success:
-	- echo 'after success'
+  - echo 'after success'
 
 after_failure:
-	- echo 'after failure'
+  - echo 'after failure'
 
 # vim: sw=2 ts=2 sts=2 expandtab
