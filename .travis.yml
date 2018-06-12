@@ -3,7 +3,7 @@
 # our op wants to run under standard privs (no sudo)
 # https://stackoverflow.com/q/40661470/4036945
 
-sudo: required
+#sudo: required
 
 # we'll use python (because that's what i'm using anyway!)
 language: python
@@ -11,9 +11,9 @@ python:
 	- "3.6"
 
 #  pip?
-cache: 
-	directories:
-	 - $HOME/.mysql_dl_tars
+#cache: 
+#	directories:
+#	 - $HOME/.mysql_dl_tars
 
 #matrix:
 #  include:
@@ -57,7 +57,7 @@ before_script:
 	# (well that was my first test - fluke? - subsequent ones were a lot slower!)
 	- mkdir "$HOME/.mysql_dl_tars"
 	- pushd "$HOME/.mysql_dl_tars"
-	- wget -c -d https://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz
+#	- wget -c -d https://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz
 	- popd
 
 	# unpack & instal
@@ -65,17 +65,17 @@ before_script:
 	# - http://www.bluecrownsoftware.com/article/271/Installing-MySQL-without-Root-Access-on-Linux
 	- mkdir "$HOME/mysql.1"
 	- pushd "$HOME/mysql.1"
-	- tar --gzip --extract --verbose --skip-old-files --directory="$HOME/mysql.1" --file="$HOME/.mysql_dl_tars/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz"
-	- pushd "$HOME/mysql.1/mysql-5.6.40-linux-glibc2.12-x86_64"
+#	- tar --gzip --extract --verbose --skip-old-files --directory="$HOME/mysql.1" --file="$HOME/.mysql_dl_tars/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz"
+#	- pushd "$HOME/mysql.1/mysql-5.6.40-linux-glibc2.12-x86_64"
 	- export TCI_D_MYSQL=$(pwd)
-	- "$TCI_D_MYSQL/scripts/mysql_install_db" --datadir="$TCI_D_MYSQL/data"
+#	- "$TCI_D_MYSQL/scripts/mysql_install_db" --datadir="$TCI_D_MYSQL/data"
 
 script:
 #  - .travis/run.sh
 	- echo 'script'
-	- ./bin/mysqld --basedir="$HOME/mysql.1" --datadir="$TCI_D_MYSQL/data" --log-error="$HOME/mysql.1/mysql.err" --pid-file="$HOME/mysql.1/mysql.pid" --socket="$HOME/mysql.1/thesock" --port=3306 &
+#	- ./bin/mysqld --basedir="$HOME/mysql.1" --datadir="$TCI_D_MYSQL/data" --log-error="$HOME/mysql.1/mysql.err" --pid-file="$HOME/mysql.1/mysql.pid" --socket="$HOME/mysql.1/thesock" --port=3306 &
 	- sleep 30
-	- ./bin/mysqladmin --socket="$HOME/mysql.1/thesock" shutdown
+#	- ./bin/mysqladmin --socket="$HOME/mysql.1/thesock" shutdown
 
 #  - ./bin/mysql --socket=[Base MySQL Directory]/thesock
 
