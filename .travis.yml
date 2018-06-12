@@ -54,7 +54,7 @@ before_script:
   - popd
 
   # unpack
-  # - thanks to https://superuser.com/q/311301 and
+  # - thanks to: https://superuser.com/q/311301, https://superuser.com/a/447498 and
   # - http://www.bluecrownsoftware.com/article/271/Installing-MySQL-without-Root-Access-on-Linux
   - if [ ! -d "$HOME/mysql.5.6.40" ]; then mkdir "$HOME/mysql.5.6.40"; fi
   - pushd "$HOME/mysql.5.6.40"
@@ -65,7 +65,7 @@ before_script:
   - echo "$TCI_D_MYSQL_ROOT"
   - echo "$TCI_D_MYSQL"
   
-  # write the cnf file
+  # write a fresh cnf file at each start
   - echo '[server]'                                    > "$TCI_D_MYSQL_ROOT/my.cnf"
   - echo "basedir=$TCI_D_MYSQL"                        >> "$TCI_D_MYSQL_ROOT/my.cnf"
   - echo "datadir=$TCI_D_MYSQL/data"                   >> "$TCI_D_MYSQL_ROOT/my.cnf"
@@ -85,6 +85,12 @@ before_script:
 script:
 #  - .travis/run.sh
   - echo 'script'
+  - pushd "$TCI_D_MYSQL/"
+  - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" &
+  - sleep 10
+  - ls -lasht /tmp
+  - ./bin/mysqladmin --socket=/tmp/.thesock --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" shutdown
+    
 # - ./bin/mysqld --basedir="$HOME/mysql.1" --datadir="$TCI_D_MYSQL/data" --log-error="$HOME/mysql.1/mysql.err" --pid-file="$HOME/mysql.1/mysql.pid" --socket="$HOME/mysql.1/thesock" --port=3306 &
 #  - sleep 30
 # - ./bin/mysqladmin --socket="$HOME/mysql.1/thesock" shutdown
