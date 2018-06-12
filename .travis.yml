@@ -90,8 +90,17 @@ script:
   - sleep 10
   - ls -lasht /tmp
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
-  - bin/mysqladmin --socket=/tmp/.thesock --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" shutdown
-    
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" shutdown
+  - sleep 10
+  - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" &
+  - sleep 10
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" shutdown
+  - sleep 10
+  - echo ''
+  - echo '::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::'
+  - echo 'Fin.'
+
 # - ./bin/mysqld --basedir="$HOME/mysql.1" --datadir="$TCI_D_MYSQL/data" --log-error="$HOME/mysql.1/mysql.err" --pid-file="$HOME/mysql.1/mysql.pid" --socket="$HOME/mysql.1/thesock" --port=3306 &
 #  - sleep 30
 # - ./bin/mysqladmin --socket="$HOME/mysql.1/thesock" shutdown
