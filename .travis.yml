@@ -73,7 +73,9 @@ script:
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping
   - ps -ef
   - ls -lasht /tmp
-  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock shutdown
+  # https://stackoverflow.com/a/3822649/4036945
+  # my_command || { echo 'my_command failed' ; exit 1; }
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock shutdown || { kill -SIGTERM $(< "$TCI_D_MYSQL_ROOT/mysql.pid") }
   - sleep 10
   - cat "$TCI_D_MYSQL_ROOT/mysql.pid"
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping
@@ -85,7 +87,7 @@ script:
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping
   - ps -ef
   - ls -lasht /tmp
-  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock shutdown
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock shutdown || { kill -SIGTERM $(< "$TCI_D_MYSQL_ROOT/mysql.pid") }
   - sleep 10
   - cat "$TCI_D_MYSQL_ROOT/mysql.pid"
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping
