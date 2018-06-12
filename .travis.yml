@@ -1,8 +1,7 @@
 # inspiration from https://github.com/python-trio/trio-mysql
 
-# our op wants to run under standard privs (no sudo)
+# remember - our op wants to run under standard privs (no sudo)
 # https://stackoverflow.com/q/40661470/4036945
-
 #sudo: required
 
 # we'll use python (because that's what i'm using anyway!)
@@ -17,25 +16,6 @@ cache:
     - $HOME/.mysql_dl_tars
     - $HOME/mysql.5.6.40
 
-#matrix:
-#  include:
-#    - addons:
-#        mariadb: 5.5
-#        python: "3.6"
-#
-#    - addons:
-#        mariadb: 10.1
-#        python: "3.6"
-#
-#    - python: "3.6"
-#      env: CHECK_DOCS=1
-
-# different py version from 5.6 and 5.7 as cache seems to be based on py version
-# http://dev.mysql.com/downloads/mysql/5.7.html has latest development release version
-# really only need libaio1 for DB builds however libaio-dev is whitelisted for container builds and liaio1 isn't
-#  - export PASSWORD=travis;
-#  - pip install -U pytest pytest-trio pytest-cov coverage
-
 # we'll have zeromq & libsodium, thanks
 install:
   - pip install -U pysodium pyzmq
@@ -43,7 +23,6 @@ install:
 before_script:
   - echo 'before script'
   - ps -ef
-#  - mysqld --verbose --help
 
   # not the nicest thing to do over and over? cache instead?
   # (my test showed a download speed of ~50 megabytes per second - proxy?)
@@ -76,10 +55,10 @@ before_script:
   - cat "$TCI_D_MYSQL_ROOT/my.cnf"
 
   # perform the instal
+  # --basedir="$TCI_D_MYSQL" --datadir="$TCI_D_MYSQL/data" --log-error="$TCI_D_MYSQL_ROOT/mysql.err" --pid-file="$TCI_D_MYSQL_ROOT/mysql.pid" --socket="$TCI_D_MYSQL_ROOT/thesock"
   - pushd "$TCI_D_MYSQL/"
   - if [ -f 'scripts/mysql_install_db' ]; then echo Will run ./scripts/mysql_install_db --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf"; fi
   - if [ -f 'scripts/mysql_install_db' ]; then ./scripts/mysql_install_db --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf"; fi
-#  - if [ -f 'mysql_install_db' ]; then ./mysql_install_db --basedir="$TCI_D_MYSQL" --datadir="$TCI_D_MYSQL/data" --log-error="$TCI_D_MYSQL_ROOT/mysql.err" --pid-file="$TCI_D_MYSQL_ROOT/mysql.pid" --socket="$TCI_D_MYSQL_ROOT/thesock"; fi
   - popd
 
 script:
@@ -87,25 +66,23 @@ script:
   - pushd "$TCI_D_MYSQL/"
   - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" &
   - sleep 10
+  - ps -ef
   - ls -lasht /tmp
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" shutdown
   - sleep 10
+  - ps -ef
   - ls -lasht /tmp
   - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" &
   - sleep 10
+  - ps -ef
   - ls -lasht /tmp
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" shutdown
   - sleep 10
+  - ps -ef
   - ls -lasht /tmp
   - echo 'Fin.'
-
-# - ./bin/mysqld --basedir="$HOME/mysql.1" --datadir="$TCI_D_MYSQL/data" --log-error="$HOME/mysql.1/mysql.err" --pid-file="$HOME/mysql.1/mysql.pid" --socket="$HOME/mysql.1/thesock" --port=3306 &
-#  - sleep 30
-# - ./bin/mysqladmin --socket="$HOME/mysql.1/thesock" shutdown
-
-#  - ./bin/mysql --socket=[Base MySQL Directory]/thesock
 
 after_success:
   - echo 'after success'
@@ -120,4 +97,5 @@ after_failure:
   - ls -lasht "$TCI_D_MYSQL_ROOT"
   - ls -lasht "$TCI_D_MYSQL"
   - cat "$TCI_D_MYSQL_ROOT/mysql.err"
+
 # vim: sw=2 ts=2 sts=2 expandtab
