@@ -3,9 +3,10 @@
 # our op wants to run under standard privs (no sudo)
 # https://stackoverflow.com/q/40661470/4036945
 
-#sudo: required
+sudo: required
 
 # we'll use python (because that's what i'm using anyway!)
+
 language: python
 python:
 	- "3.6"
@@ -39,32 +40,23 @@ install:
 	- pip install -U pysodium pyzmq
 
 before_script:
-#    - ./.travis/initializedb.sh
-#    - mysql -e 'create database test_trio_mysql  DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;'
-#    - mysql -e 'create database test_trio_mysql2 DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;'
-#    - mysql -u root -e "create user travis_pass identified by 'some password'; grant all on test_trio_mysql2.* to travis_pass;"
-#    - mysql -u root -e "create user travis_pass@localhost identified by 'some password'; grant all on test_trio_mysql2.* to travis_pass@localhost;"
-#    - mysql -u travis_pass -p'some password' -e 'show databases'
-#    - mysql -e 'select VERSION()'
-#    - python -VV
-
 	- echo 'before script'
 	- ps -ef
-#  - mysqld --verbose --help
+  - mysqld --verbose --help
 
 	# not the nicest thing to do over and over? cache instead?
 	# (my test showed a download speed of ~50 megabytes per second - proxy?)
 	# (well that was my first test - fluke? - subsequent ones were a lot slower!)
-	- mkdir "$HOME/.mysql_dl_tars"
-	- pushd "$HOME/.mysql_dl_tars"
+#	- mkdir "$HOME/.mysql_dl_tars"
+#	- pushd "$HOME/.mysql_dl_tars"
 #	- wget -c -d https://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz
-	- popd
+#	- popd
 
 	# unpack & instal
 	# - thanks to https://superuser.com/q/311301 and
 	# - http://www.bluecrownsoftware.com/article/271/Installing-MySQL-without-Root-Access-on-Linux
-	- mkdir "$HOME/mysql.1"
-	- pushd "$HOME/mysql.1"
+#	- mkdir "$HOME/mysql.1"
+#	- pushd "$HOME/mysql.1"
 #	- tar --gzip --extract --verbose --skip-old-files --directory="$HOME/mysql.1" --file="$HOME/.mysql_dl_tars/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz"
 #	- pushd "$HOME/mysql.1/mysql-5.6.40-linux-glibc2.12-x86_64"
 #	- export TCI_D_MYSQL=$(pwd)
