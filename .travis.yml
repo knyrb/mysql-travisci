@@ -43,7 +43,10 @@ before_script:
   - export TCI_D_MYSQL=$(pwd)
   - echo "$TCI_D_MYSQL_ROOT"
   - echo "$TCI_D_MYSQL"
-  
+
+  # delete the error log
+  - echo date > "$TCI_D_MYSQL_ROOT/mysql.err"
+
   # write a fresh cnf file at each start
   - echo '[server]'                                    > "$TCI_D_MYSQL_ROOT/my.cnf"
   - echo "basedir=$TCI_D_MYSQL"                        >> "$TCI_D_MYSQL_ROOT/my.cnf"
@@ -65,22 +68,26 @@ script:
   - echo 'script'
   - pushd "$TCI_D_MYSQL/"
   - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" &
-  - sleep 20
+  - sleep 10
+  - cat "$TCI_D_MYSQL_ROOT/mysql.pid"
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
   - ps -ef
   - ls -lasht /tmp
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" shutdown
-  - sleep 20
+  - sleep 10
+  - cat "$TCI_D_MYSQL_ROOT/mysql.pid"
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
   - ps -ef
   - ls -lasht /tmp
   - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" &
-  - sleep 20
+  - sleep 10
+  - cat "$TCI_D_MYSQL_ROOT/mysql.pid"
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
   - ps -ef
   - ls -lasht /tmp
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" shutdown
-  - sleep 20
+  - sleep 10
+  - cat "$TCI_D_MYSQL_ROOT/mysql.pid"
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
   - ps -ef
   - ls -lasht /tmp
