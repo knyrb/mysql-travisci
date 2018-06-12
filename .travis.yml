@@ -83,7 +83,6 @@ before_script:
   - popd
 
 script:
-#  - .travis/run.sh
   - echo 'script'
   - pushd "$TCI_D_MYSQL/"
   - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" &
@@ -92,13 +91,14 @@ script:
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" shutdown
   - sleep 10
+  - ls -lasht /tmp
   - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" &
   - sleep 10
+  - ls -lasht /tmp
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
   - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" shutdown
   - sleep 10
-  - echo ''
-  - echo '::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::'
+  - ls -lasht /tmp
   - echo 'Fin.'
 
 # - ./bin/mysqld --basedir="$HOME/mysql.1" --datadir="$TCI_D_MYSQL/data" --log-error="$HOME/mysql.1/mysql.err" --pid-file="$HOME/mysql.1/mysql.pid" --socket="$HOME/mysql.1/thesock" --port=3306 &
