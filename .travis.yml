@@ -89,7 +89,8 @@ script:
   - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" &
   - sleep 10
   - ls -lasht /tmp
-  - ./bin/mysqladmin --socket=/tmp/.thesock --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" shutdown
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
+  - bin/mysqladmin --socket=/tmp/.thesock --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" shutdown
     
 # - ./bin/mysqld --basedir="$HOME/mysql.1" --datadir="$TCI_D_MYSQL/data" --log-error="$HOME/mysql.1/mysql.err" --pid-file="$HOME/mysql.1/mysql.pid" --socket="$HOME/mysql.1/thesock" --port=3306 &
 #  - sleep 30
@@ -99,8 +100,15 @@ script:
 
 after_success:
   - echo 'after success'
+  - ls -lasht /tmp
+  - ls -lasht "$TCI_D_MYSQL_ROOT"
+  - ls -lasht "$TCI_D_MYSQL"
+  - cat "$TCI_D_MYSQL_ROOT/mysql.err"
 
 after_failure:
   - echo 'after failure'
-
+  - ls -lasht /tmp
+  - ls -lasht "$TCI_D_MYSQL_ROOT"
+  - ls -lasht "$TCI_D_MYSQL"
+  - cat "$TCI_D_MYSQL_ROOT/mysql.err"
 # vim: sw=2 ts=2 sts=2 expandtab
