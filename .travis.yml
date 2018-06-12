@@ -55,13 +55,13 @@ before_script:
   # unpack & instal
   # - thanks to https://superuser.com/q/311301 and
   # - http://www.bluecrownsoftware.com/article/271/Installing-MySQL-without-Root-Access-on-Linux
-  - if [ ! -d "$HOME/mysql.5.6.40" ]; then mkdir "$HOME/mysql.5.6.40"; fi
-  - pushd "$HOME/mysql.5.6.40"
-  - export TCI_D_MYSQL_ROOT=$(pwd)
-  - tar --gzip --extract --verbose --skip-old-files --directory="$TCI_D_MYSQL_ROOT" --file="$HOME/.mysql_dl_tars/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz"
-  - pushd "$TCI_D_MYSQL_ROOT/mysql-5.6.40-linux-glibc2.12-x86_64"
-  - export TCI_D_MYSQL=$(pwd)
-  - "$TCI_D_MYSQL/scripts/mysql_install_db" --datadir="$TCI_D_MYSQL/data"
+#  - if [ ! -d "$HOME/mysql.5.6.40" ]; then mkdir "$HOME/mysql.5.6.40"; fi
+#  - pushd "$HOME/mysql.5.6.40"
+#  - export TCI_D_MYSQL_ROOT=$(pwd)
+#  - tar --gzip --extract --verbose --skip-old-files --directory="$TCI_D_MYSQL_ROOT" --file="$HOME/.mysql_dl_tars/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz"
+#  - pushd "$TCI_D_MYSQL_ROOT/mysql-5.6.40-linux-glibc2.12-x86_64"
+#  - export TCI_D_MYSQL=$(pwd)
+#  - "$TCI_D_MYSQL/scripts/mysql_install_db" --datadir="$TCI_D_MYSQL/data"
 
 script:
 #  - .travis/run.sh
