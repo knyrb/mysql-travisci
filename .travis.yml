@@ -65,7 +65,8 @@ before_script:
   - echo "$TCI_D_MYSQL_ROOT"
   - echo "$TCI_D_MYSQL"
   - pushd "$TCI_D_MYSQL/scripts/"
-  - if [ -f 'mysql_install_db' ]; then ./mysql_install_db --basedir="$TCI_D_MYSQL" --datadir="$TCI_D_MYSQL/data" --log-error="$TCI_D_MYSQL_ROOT/mysql.err" --pid-file="$TCI_D_MYSQL_ROOT/mysql.pid" --socket="$TCI_D_MYSQL_ROOT/thesock"; fi
+  - if [ -f 'mysql_install_db' ]; then echo Will run ./mysql_install_db --basedir="$TCI_D_MYSQL" --datadir="$TCI_D_MYSQL/data" --log-error="$TCI_D_MYSQL_ROOT/mysql.err" --pid-file="$TCI_D_MYSQL_ROOT/mysql.pid" --socket="$TCI_D_MYSQL_ROOT/thesock"; fi
+#  - if [ -f 'mysql_install_db' ]; then ./mysql_install_db --basedir="$TCI_D_MYSQL" --datadir="$TCI_D_MYSQL/data" --log-error="$TCI_D_MYSQL_ROOT/mysql.err" --pid-file="$TCI_D_MYSQL_ROOT/mysql.pid" --socket="$TCI_D_MYSQL_ROOT/thesock"; fi
   - popd
 
 script:
