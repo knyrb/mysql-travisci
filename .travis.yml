@@ -77,7 +77,7 @@ script:
   # bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock shutdown
   - kill -SIGTERM $TCI_MYSQL_PID_1
   - sleep 10
-  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping
+  - if [ -f '/tmp/.thesock' ]; then bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping; fi
   - ps -ef
   - ls -lasht /tmp
   - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock &
@@ -91,14 +91,14 @@ script:
   - kill -SIGTERM $TCI_MYSQL_PID_2
   - sleep 10
   - cat "$TCI_D_MYSQL_ROOT/mysql.pid"
-  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping
+  - if [ -f '/tmp/.thesock' ]; then bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping; fi
   - ps -ef
   - ls -lasht /tmp
   - echo 'Fin.'
 
 after_success:
   - echo 'after success'
-  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping
+  - if [ -f '/tmp/.thesock' ]; then bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping; fi
   - ls -lasht "$TCI_D_MYSQL_ROOT"
   - ls -lasht "$TCI_D_MYSQL"
   - cat "$TCI_D_MYSQL_ROOT/mysql.err"
