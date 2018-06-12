@@ -53,7 +53,7 @@ before_script:
   - if [ ! -f 'mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz' ]; then wget -c -d 'https://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz'; fi
   - popd
 
-  # unpack & instal
+  # unpack
   # - thanks to https://superuser.com/q/311301 and
   # - http://www.bluecrownsoftware.com/article/271/Installing-MySQL-without-Root-Access-on-Linux
   - if [ ! -d "$HOME/mysql.5.6.40" ]; then mkdir "$HOME/mysql.5.6.40"; fi
@@ -64,8 +64,21 @@ before_script:
   - export TCI_D_MYSQL=$(pwd)
   - echo "$TCI_D_MYSQL_ROOT"
   - echo "$TCI_D_MYSQL"
+  
+  # write the cnf file
+  - echo '[server]'                                    > "$TCI_D_MYSQL_ROOT/my.cnf"
+  - echo "basedir=$TCI_D_MYSQL"                        > "$TCI_D_MYSQL_ROOT/my.cnf"
+  - echo "datadir=$TCI_D_MYSQL/data"                   > "$TCI_D_MYSQL_ROOT/my.cnf"
+  - echo "log-error=$TCI_D_MYSQL_ROOT/mysql.err"       > "$TCI_D_MYSQL_ROOT/my.cnf"
+  - echo "pid-file=$TCI_D_MYSQL_ROOT/mysql.pid"        > "$TCI_D_MYSQL_ROOT/my.cnf"
+  - echo 'socket=/tmp/.thesock'                        > "$TCI_D_MYSQL_ROOT/my.cnf"
+  - echo 'port=3666'                                   > "$TCI_D_MYSQL_ROOT/my.cnf"
+  - cat "$TCI_D_MYSQL_ROOT/my.cnf"
+
+  # perform the instal
   - pushd "$TCI_D_MYSQL/scripts/"
-  - if [ -f 'mysql_install_db' ]; then echo Will run ./mysql_install_db --basedir="$TCI_D_MYSQL" --datadir="$TCI_D_MYSQL/data" --log-error="$TCI_D_MYSQL_ROOT/mysql.err" --pid-file="$TCI_D_MYSQL_ROOT/mysql.pid" --socket="$TCI_D_MYSQL_ROOT/thesock"; fi
+  - if [ -f 'mysql_install_db' ]; then echo Will run ./mysql_install_db --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf"; fi
+  - if [ -f 'mysql_install_db' ]; then ./mysql_install_db --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf"; fi
 #  - if [ -f 'mysql_install_db' ]; then ./mysql_install_db --basedir="$TCI_D_MYSQL" --datadir="$TCI_D_MYSQL/data" --log-error="$TCI_D_MYSQL_ROOT/mysql.err" --pid-file="$TCI_D_MYSQL_ROOT/mysql.pid" --socket="$TCI_D_MYSQL_ROOT/thesock"; fi
   - popd
 
