@@ -32,7 +32,7 @@ before_script:
   - if [ ! -f 'mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz' ]; then wget -c -d 'https://dev.mysql.com/get/Downloads/MySQL-5.6/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz'; fi
   - popd
 
-  # unpack
+  # unpack & instal non-root, standalone mysqld
   # - thanks to: https://superuser.com/q/311301, https://superuser.com/a/447498 and
   # - http://www.bluecrownsoftware.com/article/271/Installing-MySQL-without-Root-Access-on-Linux
   - if [ ! -d "$HOME/mysql.5.6.40" ]; then mkdir "$HOME/mysql.5.6.40"; fi
@@ -80,6 +80,9 @@ script:
   - if [ -f '/tmp/.thesock' ]; then bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping; fi
   - ps -ef
   - ls -lasht /tmp
+  ##########################################
+  - echo 'change your cnf here'
+  ##########################################
   - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock &
   - sleep 10
   - cat "$TCI_D_MYSQL_ROOT/mysql.pid"
@@ -90,7 +93,7 @@ script:
   # bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock shutdown
   - kill -SIGTERM $TCI_MYSQL_PID_2
   - sleep 10
-  - cat "$TCI_D_MYSQL_ROOT/mysql.pid"
+  - if [ -f '/tmp/.thesock' ]; then cat "$TCI_D_MYSQL_ROOT/mysql.pid"; fi
   - if [ -f '/tmp/.thesock' ]; then bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping; fi
   - ps -ef
   - ls -lasht /tmp
