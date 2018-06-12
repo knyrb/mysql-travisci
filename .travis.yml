@@ -64,7 +64,9 @@ before_script:
   - export TCI_D_MYSQL=$(pwd)
   - echo "$TCI_D_MYSQL_ROOT"
   - echo "$TCI_D_MYSQL"
-  - "$TCI_D_MYSQL/scripts/mysql_install_db" --datadir="$TCI_D_MYSQL/data"
+  - pushd "$TCI_D_MYSQL/scripts/"
+  - if [ -f "mysql_install_db" ]; then ./mysql_install_db --datadir="$TCI_D_MYSQL/data"; fi
+  - popd
 
 script:
 #  - .travis/run.sh
