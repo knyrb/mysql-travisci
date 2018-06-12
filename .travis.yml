@@ -10,8 +10,8 @@ language: python
 python:
   - "3.6"
 
-cache: 
 #  pip?
+cache: 
   directories:
    - $HOME/.mysql_dl_tars
 
@@ -74,6 +74,7 @@ script:
 #  - .travis/run.sh
   - echo 'script'
   - ./bin/mysqld --basedir="$HOME/mysql.1" --datadir="$TCI_D_MYSQL/data" --log-error="$HOME/mysql.1/mysql.err" --pid-file="$HOME/mysql.1/mysql.pid" --socket="$HOME/mysql.1/thesock" --port=3306 &
+  - sleep 30
   - ./bin/mysqladmin --socket="$HOME/mysql.1/thesock" shutdown
 
 #  - ./bin/mysql --socket=[Base MySQL Directory]/thesock
