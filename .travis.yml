@@ -67,35 +67,35 @@ before_script:
 script:
   - echo 'script'
   - pushd "$TCI_D_MYSQL/"
-  - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" &
+  - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock &
   - sleep 10
   - cat "$TCI_D_MYSQL_ROOT/mysql.pid"
-  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping
   - ps -ef
   - ls -lasht /tmp
-  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" shutdown
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock shutdown
   - sleep 10
   - cat "$TCI_D_MYSQL_ROOT/mysql.pid"
-  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping
   - ps -ef
   - ls -lasht /tmp
-  - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" &
+  - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock &
   - sleep 10
   - cat "$TCI_D_MYSQL_ROOT/mysql.pid"
-  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping
   - ps -ef
   - ls -lasht /tmp
-  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" shutdown
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock shutdown
   - sleep 10
   - cat "$TCI_D_MYSQL_ROOT/mysql.pid"
-  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping
   - ps -ef
   - ls -lasht /tmp
   - echo 'Fin.'
 
 after_success:
   - echo 'after success'
-  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" ping
+  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping
   - ls -lasht "$TCI_D_MYSQL_ROOT"
   - ls -lasht "$TCI_D_MYSQL"
   - cat "$TCI_D_MYSQL_ROOT/mysql.err"
