@@ -12,9 +12,9 @@ python:
   - "3.6"
 
 #  pip?
-#cache: 
-# directories:
-#  - $HOME/.mysql_dl_tars
+cache: 
+  directories:
+    - $HOME/.mysql_dl_tars
 
 #matrix:
 #  include:
