@@ -3,7 +3,7 @@
 # our op wants to run under standard privs (no sudo)
 # https://stackoverflow.com/q/40661470/4036945
 
-sudo: required
+#sudo: required
 
 # we'll use python (because that's what i'm using anyway!)
 
