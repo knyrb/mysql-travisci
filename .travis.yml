@@ -65,7 +65,7 @@ before_script:
   - echo "$TCI_D_MYSQL_ROOT"
   - echo "$TCI_D_MYSQL"
   - pushd "$TCI_D_MYSQL/scripts/"
-  - if [ -f "mysql_install_db" ]; then ./mysql_install_db --datadir="$TCI_D_MYSQL/data"; fi
+  - if [ -f "mysql_install_db" ]; then ./mysql_install_db --basedir="$TCI_D_MYSQL" --datadir="$TCI_D_MYSQL/data"; fi
   - popd
 
 script:
