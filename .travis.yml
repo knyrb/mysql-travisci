@@ -67,12 +67,12 @@ before_script:
   
   # write the cnf file
   - echo '[server]'                                    > "$TCI_D_MYSQL_ROOT/my.cnf"
-  - echo "basedir=$TCI_D_MYSQL"                        > "$TCI_D_MYSQL_ROOT/my.cnf"
-  - echo "datadir=$TCI_D_MYSQL/data"                   > "$TCI_D_MYSQL_ROOT/my.cnf"
-  - echo "log-error=$TCI_D_MYSQL_ROOT/mysql.err"       > "$TCI_D_MYSQL_ROOT/my.cnf"
-  - echo "pid-file=$TCI_D_MYSQL_ROOT/mysql.pid"        > "$TCI_D_MYSQL_ROOT/my.cnf"
-  - echo 'socket=/tmp/.thesock'                        > "$TCI_D_MYSQL_ROOT/my.cnf"
-  - echo 'port=3666'                                   > "$TCI_D_MYSQL_ROOT/my.cnf"
+  - echo "basedir=$TCI_D_MYSQL"                        >> "$TCI_D_MYSQL_ROOT/my.cnf"
+  - echo "datadir=$TCI_D_MYSQL/data"                   >> "$TCI_D_MYSQL_ROOT/my.cnf"
+  - echo "log-error=$TCI_D_MYSQL_ROOT/mysql.err"       >> "$TCI_D_MYSQL_ROOT/my.cnf"
+  - echo "pid-file=$TCI_D_MYSQL_ROOT/mysql.pid"        >> "$TCI_D_MYSQL_ROOT/my.cnf"
+  - echo 'socket=/tmp/.thesock'                        >> "$TCI_D_MYSQL_ROOT/my.cnf"
+  - echo 'port=3666'                                   >> "$TCI_D_MYSQL_ROOT/my.cnf"
   - cat "$TCI_D_MYSQL_ROOT/my.cnf"
 
   # perform the instal
