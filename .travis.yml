@@ -59,7 +59,7 @@ before_script:
   - if [ ! -d "$HOME/mysql.5.6.40" ]; then mkdir "$HOME/mysql.5.6.40"; fi
   - pushd "$HOME/mysql.5.6.40"
   - export TCI_D_MYSQL_ROOT=$(pwd)
-  - tar --gzip --extract --skip-old-files --directory="$TCI_D_MYSQL_ROOT" --file="$HOME/.mysql_dl_tars/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz"
+  - if [ ! -d "$TCI_D_MYSQL_ROOT/mysql-5.6.40-linux-glibc2.12-x86_64" ]; then tar --gzip --extract --skip-old-files --directory="$TCI_D_MYSQL_ROOT" --file="$HOME/.mysql_dl_tars/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz"; fi
   - pushd "$TCI_D_MYSQL_ROOT/mysql-5.6.40-linux-glibc2.12-x86_64"
   - export TCI_D_MYSQL=$(pwd)
   - echo "$TCI_D_MYSQL_ROOT"
@@ -76,9 +76,9 @@ before_script:
   - cat "$TCI_D_MYSQL_ROOT/my.cnf"
 
   # perform the instal
-  - pushd "$TCI_D_MYSQL/scripts/"
-  - if [ -f 'mysql_install_db' ]; then echo Will run ./mysql_install_db --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf"; fi
-  - if [ -f 'mysql_install_db' ]; then ./mysql_install_db --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf"; fi
+  - pushd "$TCI_D_MYSQL/"
+  - if [ -f 'scripts/mysql_install_db' ]; then echo Will run ./scripts/mysql_install_db --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf"; fi
+  - if [ -f 'scripts/mysql_install_db' ]; then ./scripts/mysql_install_db --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf"; fi
 #  - if [ -f 'mysql_install_db' ]; then ./mysql_install_db --basedir="$TCI_D_MYSQL" --datadir="$TCI_D_MYSQL/data" --log-error="$TCI_D_MYSQL_ROOT/mysql.err" --pid-file="$TCI_D_MYSQL_ROOT/mysql.pid" --socket="$TCI_D_MYSQL_ROOT/thesock"; fi
   - popd
 
