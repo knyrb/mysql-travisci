@@ -1,17 +1,21 @@
+# brynk, 2018
+#
+# have travis-ci spin up mysqld a few times, changing the mysqld config parameters before the next start
+#
 # inspiration from https://github.com/python-trio/trio-mysql
-
+#
 # remember - our op wants to run under standard privs (no sudo)
 # https://stackoverflow.com/q/40661470/4036945
 #sudo: required
 
 # we'll use python (because that's what i'm using anyway!)
-
 language: python
 python:
   - "3.6"
 
 #  pip?
-cache: 
+cache:
+  pip: true
   directories:
     - $HOME/.mysql_dl_tars
     - $HOME/mysql.5.6.40
@@ -35,66 +39,120 @@ before_script:
   # unpack & instal non-root, standalone mysqld
   # - thanks to: https://superuser.com/q/311301, https://superuser.com/a/447498 and
   # - http://www.bluecrownsoftware.com/article/271/Installing-MySQL-without-Root-Access-on-Linux
+  # note: if mysql binaries are updated into this directory, you should also delete any existing data tar (see next section)
   - if [ ! -d "$HOME/mysql.5.6.40" ]; then mkdir "$HOME/mysql.5.6.40"; fi
   - pushd "$HOME/mysql.5.6.40"
-  - export TCI_D_MYSQL_ROOT=$(pwd)
-  - if [ ! -d "$TCI_D_MYSQL_ROOT/mysql-5.6.40-linux-glibc2.12-x86_64" ]; then tar --gzip --extract --skip-old-files --directory="$TCI_D_MYSQL_ROOT" --file="$HOME/.mysql_dl_tars/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz"; fi
-  - pushd "$TCI_D_MYSQL_ROOT/mysql-5.6.40-linux-glibc2.12-x86_64"
+  - if [ ! -d "mysql-5.6.40-linux-glibc2.12-x86_64" ]; then tar --gzip --extract --skip-old-files --file="$HOME/.mysql_dl_tars/mysql-5.6.40-linux-glibc2.12-x86_64.tar.gz"; fi
+  - pushd "mysql-5.6.40-linux-glibc2.12-x86_64"
   - export TCI_D_MYSQL=$(pwd)
-  - echo "$TCI_D_MYSQL_ROOT"
+
+  # we create a mysql root that won't be pushed back into the cache - for storing data, config & logs, etc.
+  - if [ ! -d "$HOME/mysql_uncached.5.6.40" ]; then mkdir "$HOME/mysql_uncached.5.6.40"; fi
+  - pushd "$HOME/mysql_uncached.5.6.40"
+  - export TCI_D_UNCACHED=$(pwd)
+
+  # this section ensures that any changes made to mysql data won't be pushed back into the cache after the build
+  - pushd "$TCI_D_MYSQL"
+  # it creates a tar of the initial data directory, then moves the data directory out of the cache
+  # in future runs, it will detect the tar and unpack it into the uncached root
+  - export TCI_TARDAT="$TCI_D_MYSQL/mysql_basedata_dir.tar"
+  # 1. if no uncached base data dir but there is a data dir, we tar it
+  - if [ ! -d "$TCI_D_UNCACHED/data" ]; then if [ -d 'data' ]; then if [ ! -f "$TCI_TARDAT" ]; then tar --create --recursion --file="$TCI_TARDAT" ./data; fi; fi; fi
+  # 2. if no uncached base data dir but there is a data dir, move it
+  - if [ ! -d "$TCI_D_UNCACHED/data" ]; then if [ -d 'data' ]; then mv ./data "$TCI_D_UNCACHED"; fi; fi
+  # 3. if still no uncached base data dir but there is a cached tar, unpack it
+  - if [ ! -d "$TCI_D_UNCACHED/data" ]; then if [ -f "$TCI_TARDAT" ]; then tar --extract --file="$TCI_TARDAT" --directory="$TCI_D_UNCACHED"; fi; fi
+  # 4. if still no uncached base data dir, we've errored and mustn't continue
+  - if [ ! -d "$TCI_D_UNCACHED/data" ]; then exit 1; fi
+  # at some point in the future, you may also wish to update the data dir tar which is cached:
+  # - tar --update --recursion --verbose --file="$TCI_TARDAT" "$TCI_D_UNCACHED/data"
+
+  - echo "$TCI_D_UNCACHED"
   - echo "$TCI_D_MYSQL"
+  - echo "$TCI_TARDAT"
 
-  # delete the error log
-  - echo date > "$TCI_D_MYSQL_ROOT/mysql.err"
-
+  # delete/ recreate the error log
+  - export TCI_MYERR="$TCI_D_UNCACHED/mysql.err"
+  - echo date > "$TCI_MYERR"
+  # our interaction socket
+  - export TCI_MYSOCK='/tmp/.thesock'
+  # our pid
+  - export TCI_MYPID="$TCI_D_UNCACHED/mysql.pid"
   # write a fresh cnf file at each start
-  - echo '[server]'                                    > "$TCI_D_MYSQL_ROOT/my.cnf"
-  - echo "basedir=$TCI_D_MYSQL"                        >> "$TCI_D_MYSQL_ROOT/my.cnf"
-  - echo "datadir=$TCI_D_MYSQL/data"                   >> "$TCI_D_MYSQL_ROOT/my.cnf"
-  - echo "log-error=$TCI_D_MYSQL_ROOT/mysql.err"       >> "$TCI_D_MYSQL_ROOT/my.cnf"
-  - echo "pid-file=$TCI_D_MYSQL_ROOT/mysql.pid"        >> "$TCI_D_MYSQL_ROOT/my.cnf"
-  - echo 'socket=/tmp/.thesock'                        >> "$TCI_D_MYSQL_ROOT/my.cnf"
-  - echo 'port=3666'                                   >> "$TCI_D_MYSQL_ROOT/my.cnf"
-  - cat "$TCI_D_MYSQL_ROOT/my.cnf"
+  - export TCI_MYCNF="$TCI_D_UNCACHED/my.cnf"
+  - echo '[server]'                         > "$TCI_MYCNF"
+  - echo "basedir=$TCI_D_MYSQL"             >> "$TCI_MYCNF"
+  - echo "log-error=$TCI_MYERR"             >> "$TCI_MYCNF"
+  - echo "socket=$TCI_MYSOCK"               >> "$TCI_MYCNF"
+  - echo "pid-file=$TCI_MYPID"              >> "$TCI_MYCNF"
+  - echo "datadir=$TCI_D_UNCACHED/data"     >> "$TCI_MYCNF"
+  - echo 'port=3666'                        >> "$TCI_MYCNF"
+  - cat "$TCI_MYCNF"
 
   # perform the instal
   # --basedir="$TCI_D_MYSQL" --datadir="$TCI_D_MYSQL/data" --log-error="$TCI_D_MYSQL_ROOT/mysql.err" --pid-file="$TCI_D_MYSQL_ROOT/mysql.pid" --socket="$TCI_D_MYSQL_ROOT/thesock"
   - pushd "$TCI_D_MYSQL/"
-  - if [ -f 'scripts/mysql_install_db' ]; then echo Will run ./scripts/mysql_install_db --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf"; fi
-  - if [ -f 'scripts/mysql_install_db' ]; then ./scripts/mysql_install_db --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf"; fi
+  - if [ -f 'scripts/mysql_install_db' ]; then echo Will run ./scripts/mysql_install_db --defaults-file="$TCI_MYCNF"; fi
+  - if [ -f 'scripts/mysql_install_db' ]; then ./scripts/mysql_install_db --defaults-file="$TCI_MYCNF"; fi
   - popd
 
 script:
+  ##########################################
+  # start mysqld the first time, then stop
   - echo 'script'
   - pushd "$TCI_D_MYSQL/"
-  - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock &
+  - bin/mysqld --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" &
   - sleep 10
-  - cat "$TCI_D_MYSQL_ROOT/mysql.pid"
-  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping
-  - ps -ef
-  - ls -lasht /tmp
-  - export TCI_MYSQL_PID_1="`cat $TCI_D_MYSQL_ROOT/mysql.pid`"
+
+  - export TCI_MYSQL_PID_1="`cat $TCI_MYPID`"
+  - bin/mysqladmin --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" ping
+
   # bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock shutdown
   - kill -SIGTERM $TCI_MYSQL_PID_1
   - sleep 10
-  - if [ -f '/tmp/.thesock' ]; then bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping; fi
-  - ps -ef
-  - ls -lasht /tmp
+  - if [ -f "$TCI_MYSOCK" ]; then bin/mysqladmin --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" ping; fi
+
   ##########################################
-  - echo 'change your cnf here'
+  # new data directory from the tar
+  - if [ -d "$TCI_D_UNCACHED/data" ]; then mv "$TCI_D_UNCACHED/data" "$TCI_D_UNCACHED/data.o.1st"; fi
+  - if [ ! -d "$TCI_D_UNCACHED/data" ]; then if [ -f "$TCI_TARDAT" ]; then tar --extract --file="$TCI_TARDAT" --directory="$TCI_D_UNCACHED"; fi; fi
+  - if [ ! -d "$TCI_D_UNCACHED/data" ]; then exit 1; fi
+
+  # delete/ recreate the error log
+  - export TCI_MYERR="$TCI_D_UNCACHED/mysql_2nd.err"
+  - echo date > "$TCI_MYERR"
+  # our interaction socket
+  - export TCI_MYSOCK='/tmp/.thesock_2nd'
+  # our pid
+  - export TCI_MYPID="$TCI_D_UNCACHED/mysql_2nd.pid"
+  # our second config
+  - export TCI_MYCNF="$TCI_D_UNCACHED/my_2nd.cnf"
+  - echo '[server]'                         > "$TCI_MYCNF"
+  - echo "basedir=$TCI_D_MYSQL"             >> "$TCI_MYCNF"
+  - echo "log-error=$TCI_MYERR"             >> "$TCI_MYCNF"
+  - echo "socket=$TCI_MYSOCK"               >> "$TCI_MYCNF"
+  - echo "pid-file=$TCI_MYPID"              >> "$TCI_MYCNF"
+  - echo "datadir=$TCI_D_UNCACHED/data"     >> "$TCI_MYCNF"
+  - echo 'port=3666'                        >> "$TCI_MYCNF"
+  - cat "$TCI_MYCNF"
+
   ##########################################
-  - bin/mysqld --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock &
+  # start mysqld the second time
+  - echo 'script'
+  - pushd "$TCI_D_MYSQL/"
+  - bin/mysqld --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" &
   - sleep 10
-  - cat "$TCI_D_MYSQL_ROOT/mysql.pid"
-  - bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping
-  - ps -ef
-  - ls -lasht /tmp
+
   - export TCI_MYSQL_PID_2="`cat $TCI_D_MYSQL_ROOT/mysql.pid`"
+  - bin/mysqladmin --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" ping
+
   # bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock shutdown
-  - kill -SIGTERM $TCI_MYSQL_PID_2
+  - kill -SIGTERM $TCI_MYSQL_PID_1
   - sleep 10
-  - if [ -f '/tmp/.thesock' ]; then cat "$TCI_D_MYSQL_ROOT/mysql.pid"; fi
-  - if [ -f '/tmp/.thesock' ]; then bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping; fi
+  - if [ -f "$TCI_MYSOCK" ]; then bin/mysqladmin --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" ping; fi
+
+  ##########################################
+  # finish up
   - ps -ef
   - ls -lasht /tmp
   - echo 'Fin.'
