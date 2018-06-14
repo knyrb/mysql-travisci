@@ -106,6 +106,7 @@ script:
 
   - export TCI_MYSQL_PID_1="`cat $TCI_MYPID`"
   - bin/mysqladmin --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" ping
+  - cat "$TCI_MYERR"
 
   # bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock shutdown
   - kill -SIGTERM $TCI_MYSQL_PID_1
@@ -145,6 +146,7 @@ script:
 
   - export TCI_MYSQL_PID_2="`cat $TCI_MYPID`"
   - bin/mysqladmin --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" ping
+  - cat "$TCI_MYERR"
 
   # bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock shutdown
   - kill -SIGTERM $TCI_MYSQL_PID_2
