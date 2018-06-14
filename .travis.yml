@@ -115,9 +115,11 @@ script:
 
   ##########################################
   # new data directory from the tar
+  - ls -lasht "$TCI_D_UNCACHED"
   - if [ -d "$TCI_D_UNCACHED/data" ]; then mv "$TCI_D_UNCACHED/data" "$TCI_D_UNCACHED/data.o.1st"; fi
   - if [ ! -d "$TCI_D_UNCACHED/data" ]; then if [ -f "$TCI_TARDAT" ]; then tar --extract --file="$TCI_TARDAT" --directory="$TCI_D_UNCACHED"; fi; fi
   - if [ ! -d "$TCI_D_UNCACHED/data" ]; then exit 1; fi
+  - ls -lasht "$TCI_D_UNCACHED"
 
   # delete/ recreate the error log
   - export TCI_MYERR="$TCI_D_UNCACHED/mysql_2nd.err"
@@ -139,7 +141,6 @@ script:
 
   ##########################################
   # start mysqld the second time
-  - echo 'script'
   - pushd "$TCI_D_MYSQL/"
   - bin/mysqld --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" &
   - sleep 10
@@ -161,16 +162,16 @@ script:
 
 after_success:
   - echo 'after success'
-  - if [ -f '/tmp/.thesock' ]; then bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock ping; fi
-  - ls -lasht "$TCI_D_MYSQL_ROOT"
+  - if [ -f '/tmp/.thesock' ]; then bin/mysqladmin --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" ping; fi
+  - ls -lasht "$TCI_D_UNCACHED"
   - ls -lasht "$TCI_D_MYSQL"
-  - cat "$TCI_D_MYSQL_ROOT/mysql.err"
+  - cat "$TCI_MYERR"
 
 after_failure:
   - echo 'after failure'
   - ls -lasht /tmp
-  - ls -lasht "$TCI_D_MYSQL_ROOT"
+  - ls -lasht "$TCI_D_UNCACHED"
   - ls -lasht "$TCI_D_MYSQL"
-  - cat "$TCI_D_MYSQL_ROOT/mysql.err"
+  - cat "$TCI_MYERR"
 
 # vim: sw=2 ts=2 sts=2 expandtab
