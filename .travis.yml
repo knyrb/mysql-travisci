@@ -71,9 +71,9 @@ before_script:
   - echo "$TCI_D_MYSQL"
   - echo "$TCI_TARDAT"
 
-  # delete/ recreate the error log
+  # delete/ recreate the first instance vars
   - export TCI_MYERR="$TCI_D_UNCACHED/mysql.err"
-  - echo date > "$TCI_MYERR"
+  - echo $(date) > "$TCI_MYERR"
   # our interaction socket
   - export TCI_MYSOCK='/tmp/.thesock'
   # our pid
@@ -104,6 +104,9 @@ script:
   - bin/mysqld --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" &
   - sleep 10
 
+  - ls -lasht /tmp
+  - ps -ef | grep 'travis'
+
   - export TCI_MYSQL_PID_1="`cat $TCI_MYPID`"
   - bin/mysqladmin --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" ping
   - cat "$TCI_MYERR"
@@ -112,6 +115,9 @@ script:
   - kill -SIGTERM $TCI_MYSQL_PID_1
   - sleep 10
   - if [ -f "$TCI_MYSOCK" ]; then bin/mysqladmin --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" ping; fi
+
+  - ls -lasht /tmp
+  - ps -ef | grep 'travis'
 
   ##########################################
   # new data directory from the tar
@@ -123,7 +129,7 @@ script:
 
   # delete/ recreate the error log
   - export TCI_MYERR="$TCI_D_UNCACHED/mysql_2nd.err"
-  - echo date > "$TCI_MYERR"
+  - echo $(date) > "$TCI_MYERR"
   # our interaction socket
   - export TCI_MYSOCK='/tmp/.thesock_2nd'
   # our pid
@@ -145,6 +151,9 @@ script:
   - bin/mysqld --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" &
   - sleep 10
 
+  - ls -lasht /tmp
+  - ps -ef | grep 'travis'
+
   - export TCI_MYSQL_PID_2="`cat $TCI_MYPID`"
   - bin/mysqladmin --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" ping
   - cat "$TCI_MYERR"
@@ -153,6 +162,9 @@ script:
   - kill -SIGTERM $TCI_MYSQL_PID_2
   - sleep 10
   - if [ -f "$TCI_MYSOCK" ]; then bin/mysqladmin --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" ping; fi
+
+  - ls -lasht /tmp
+  - ps -ef | grep 'travis'
 
   ##########################################
   # finish up
