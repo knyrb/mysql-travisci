@@ -147,7 +147,7 @@ script:
   - bin/mysqladmin --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" ping
 
   # bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock shutdown
-  - kill -SIGTERM $TCI_MYSQL_PID_1
+  - kill -SIGTERM $TCI_MYSQL_PID_2
   - sleep 10
   - if [ -f "$TCI_MYSOCK" ]; then bin/mysqladmin --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" ping; fi
 
