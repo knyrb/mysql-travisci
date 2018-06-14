@@ -12,3 +12,7 @@ Tip - after you add the repository, but before you upload the .travis.yml file i
  - after the build finishes, 'view config' tab-thing to the right of 'job log':
    - shows you what the yml file winds up looking like as json
    - if you use any '{}' in your .travis.yml, it will cause errors in the resultant json - fix?
+
+Todo:
+ - avoid the ~80sec cache update at the end of the build - will unpacking mysql in the same way as for default data do the trick?
+ - get the mysql .cnf files into git and use these on the fly, rather than generating them in the travis yml
