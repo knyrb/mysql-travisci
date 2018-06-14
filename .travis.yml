@@ -143,7 +143,7 @@ script:
   - bin/mysqld --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" &
   - sleep 10
 
-  - export TCI_MYSQL_PID_2="`cat $TCI_D_MYSQL_ROOT/mysql.pid`"
+  - export TCI_MYSQL_PID_2="`cat $TCI_MYPID`"
   - bin/mysqladmin --defaults-file="$TCI_MYCNF" --socket="$TCI_MYSOCK" ping
 
   # bin/mysqladmin --defaults-file="$TCI_D_MYSQL_ROOT/my.cnf" --socket=/tmp/.thesock shutdown
