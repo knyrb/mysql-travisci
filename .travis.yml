@@ -13,6 +13,9 @@ language: python
 python:
   - "3.6"
 
+before_cache:
+  - export TCI_NOW_BC=$(date +%s.%N)
+
 #  pip?
 cache:
   pip: true
@@ -20,8 +23,12 @@ cache:
     - $HOME/.mysql_dl_tars
     - $HOME/mysql.5.6.40
 
+before_install:
+  - export TCI_NOW_BI=$(date +%s.%N)
+
 # we'll have zeromq & libsodium, thanks
 install:
+  - echo "$TCI_NOW_BC" "$TCI_NOW_BI"
   - pip install -U pysodium pyzmq
 
 before_script:
