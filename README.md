@@ -22,15 +22,17 @@ Todo:
 ^Files that may not be necessary:
 
 **embedded server**
-|-----------|---------------------------------------------------------------------|
-| 203.13 MB | /mysql-5.6.40-linux-glibc2.12-x86_64/lib/libmysqld.a                |
-| 171.50 MB | /mysql-5.6.40-linux-glibc2.12-x86_64/lib/libmysqld-debug.a          |
-|  77.94 MB | /mysql-5.6.40-linux-glibc2.12-x86_64/bin/mysqltest_embedded         |
-|  78.74 MB | /mysql-5.6.40-linux-glibc2.12-x86_64/bin/mysql_client_test_embedded |
-|  78.37 MB | /mysql-5.6.40-linux-glibc2.12-x86_64/bin/mysql_embedded             |
+```
+ 203.13 MB mysql-5.6.40-linux-glibc2.12-x86_64/lib/libmysqld.a
+ 171.50 MB mysql-5.6.40-linux-glibc2.12-x86_64/lib/libmysqld-debug.a
+  77.94 MB mysql-5.6.40-linux-glibc2.12-x86_64/bin/mysqltest_embedded
+  78.74 MB mysql-5.6.40-linux-glibc2.12-x86_64/bin/mysql_client_test_embedded
+  78.37 MB mysql-5.6.40-linux-glibc2.12-x86_64/bin/mysql_embedded
+```
 
 **test & debug**
-------------
-| 68.40 MB | /mysql-5.6.40-linux-glibc2.12-x86_64/bin/mysqld-debug |
-| 185M | mysql.1/mysql-5.6.40-linux-glibc2.12-x86_64/mysql-test |
-| 2.7M | mysql.1/mysql-5.6.40-linux-glibc2.12-x86_64/lib/plugin/debug |
+```
+ 68.40 MB  mysql-5.6.40-linux-glibc2.12-x86_64/bin/mysqld-debug
+185M       mysql.1/mysql-5.6.40-linux-glibc2.12-x86_64/mysql-test
+  2.7M     mysql.1/mysql-5.6.40-linux-glibc2.12-x86_64/lib/plugin/debug
+```
